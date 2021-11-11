@@ -12,7 +12,7 @@ GMP := $(shell curl -s https://ftp.gnu.org/gnu/gmp/|grep "tar.bz2<"|tail -1|perl
 MPC := $(shell curl -s https://ftp.gnu.org/gnu/mpc/|grep "tar.gz<"|tail -1|perl -pe 's/^.*?>mpc-(.*).tar.gz.*/\1/')
 MPFR := $(shell curl -s https://ftp.gnu.org/gnu/mpfr/|grep "tar.gz<"|tail -1|perl -pe 's/^.*?>mpfr-(.*).tar.gz.*/\1/')
 ARCH_TAG := $(DOCKER_TAG):$(GCC)-$(ARCH)$(DOCKER_SUBTAG)
-BUILDAH_CACHE := -v $(PWD)/repo:/repo -v /opt/toolchain:/opt/toolchain
+#BUILDAH_CACHE := -v $(PWD)/repo:/repo -v /opt/toolchain:/opt/toolchain
 BUILDAH_CACHE := -v $(PWD)/repo:/repo
 JOBS := -j1
 
@@ -36,6 +36,7 @@ build: $(addprefix build-, $(ARCHS))
 
 build-%:
 	$(eval ARCH := $(subst build-,,$@))
+	mkdir repo
 	buildah bud $(BUILDAH_CACHE) --format docker --layers --platform linux/$(ARCH) --build-arg JOBS=$(JOBS) --build-arg UBUNTU=$(UBUNTU) --build-arg TARGETARCH=$(ARCH) --build-arg TOOLTARGET=$(ARCH)-unknown-elf  --build-arg BINUTILS=$(BINUTILS) --build-arg GCC=$(GCC) --build-arg MPC=$(MPC) --build-arg MPFR=$(MPFR) -t $(ARCH_TAG) -f Dockerfile.march .
 	
 	
