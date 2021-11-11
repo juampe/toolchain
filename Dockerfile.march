@@ -1,0 +1,72 @@
+# syntax=docker/dockerfile:2
+ARG UBUNTU="ubuntu:impish"
+FROM ${UBUNTU}
+ARG DEBIAN_FRONTEND="noninteractive"
+ARG TARGETARCH
+ARG TOOLTARGET=riscv64-unknown-elf
+ARG BINUTILS="2.36"
+ARG GCC="11.1.0"
+ARG GMP="6.2.1"
+ARG MPC="1.2.1"
+ARG MPFR="4.1.0"
+
+RUN apt-get -y update \
+  && apt-get -y upgrade \
+  && apt-get -y install --no-install-recommends apt-utils bash curl wget ca-certificates automake build-essential pkg-config \
+  libffi-dev libgmp-dev libssl-dev libtinfo-dev libsystemd-dev zlib1g-dev make g++ tmux git jq wget libncursesw5 libtool \
+  autoconf libnuma1 libnuma-dev opt llvm llvm-13 llvm-13-dev clang-13 libclang-13-dev libatomic1 libatomic-ops-dev
+
+
+RUN mkdir -p /opt/toolchain/${TARGETARCH}/src \
+  && mkdir -p /opt/toolchain/${TARGETARCH}/build \
+  && cd /opt/toolchain/${TARGETARCH}/src \
+  && wget https://ftp.gnu.org/gnu/binutils/binutils-${BINUTILS}.tar.bz2 \
+  && tar xf binutils-${BINUTILS}.tar.bz2 \
+  && cd ../build \
+  && mkdir binutils-${BINUTILS} \
+  && cd binutils-${BINUTILS}/ \
+  && ../../src/binutils-${BINUTILS}/configure --prefix=/opt/toolchain/${TARGETARCH} --target=${TOOLTARGET} --disable-nls \
+  && make \
+  && make install
+
+RUN cd /opt/toolchain/${TARGETARCH}/src \
+  && wget https://ftp.gnu.org/gnu/gcc/gcc-${GCC}/gcc-${GCC}.tar.gz \
+  && wget https://ftp.gnu.org/gnu/gmp/gmp-${GMP}.tar.bz2 \
+  && wget https://ftp.gnu.org/gnu/mpc/mpc-${MPC}.tar.gz \
+  && wget https://ftp.gnu.org/gnu/mpfr/mpfr-${MPFR}.tar.gz \
+  && tar xf gcc-${GCC}.tar.gz \
+  && tar xf gmp-${GMP}.tar.bz2 \
+  && tar xf mpc-${MPC}.tar.gz \
+  && tar xf mpfr-${MPFR}.tar.gz \
+  && mv gmp-${GMP} gcc-${GCC}/gmp \
+  && mv mpc-${MPC} gcc-${GCC}/mpc \
+  && mv mpfr-${MPFR} gcc-${GCC}/mpfr \
+  && cd ../build/ \
+  && mkdir gcc-${GCC}-stage-1 \
+  && cd gcc-${GCC}-stage-1/ \
+  && export PATH=/opt/toolchain/${TARGETARCH}/bin:${PATH} \
+  && ../../src/gcc-${GCC}/configure --prefix=/opt/toolchain/${TARGETARCH} --target=${TOOLTARGET} --enable-languages=c --without-headers --disable-nls --disable-threads --disable-shared --disable-libssp --with-newlib \
+  && make all-gcc all-target-libgcc \
+  && make install-gcc install-target-libgcc 
+
+RUN cd /opt/toolchain/${TARGETARCH}/src \
+  && git clone git://github.com/riscv/riscv-newlib.git \
+  && cd ../build \
+  && mkdir newlib \
+  && cd newlib \
+  && export PATH=/opt/toolchain/${TARGETARCH}/bin:${PATH} \
+  && ../../src/riscv-newlib/configure --prefix=/opt/toolchain/${TARGETARCH} --target=${TOOLTARGET} \
+  && make \
+  && make install 
+
+RUN cd /opt/toolchain/${TARGETARCH}/build \
+  && mkdir gcc-${GCC}-stage-2 \
+  && cd gcc-${GCC}-stage-2/ \
+  && export PATH=/opt/toolchain/${TARGETARCH}/bin:${PATH} \
+  && ../../src/gcc-${GCC}/configure --prefix=/opt/toolchain/${TARGETARCH} --target=${TOOLTARGET} --enable-languages=c,c++ --disable-nls --disable-threads --disable-shared --disable-libssp --with-newlib --with-headers=../../src/riscv-newlib/newlib/libc/include \
+  && make \
+  && make install
+
+# Create dist file
+RUN  tar -cvjf repo/toolchain-gcc-elf-newlib-${TARGETARCH}-${GCC}.tgz /opt/toolchain/${TARGETARCH}/{bin,include,libexec,share,${TOOLTARGET}}
+
