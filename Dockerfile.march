@@ -67,6 +67,6 @@ RUN cd /opt/toolchain/${TARGETARCH}/build \
   && make \
   && make install
 
-# Create dist file
-RUN  tar -cvjf repo/toolchain-gcc-elf-newlib-${TARGETARCH}-${GCC}.tgz /opt/toolchain/${TARGETARCH}/{bin,include,libexec,share,${TOOLTARGET}}
+# Create dist file in repo
+RUN  bash -c "tar -cvjf repo/toolchain-gcc-elf-newlib-${TARGETARCH}-${GCC}.tbz2 /opt/toolchain/${TARGETARCH}/{bin,include,lib,libexec,share,${TOOLTARGET}}"
 
