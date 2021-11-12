@@ -22,6 +22,8 @@ make build-arm64
 make build-xtensa
 ```
 
+The resulted toolchain is stored in the repo directory
+
 # 🙏Thanks 
 To @avelinohm and his blog.
 This procedure is based on this article.
