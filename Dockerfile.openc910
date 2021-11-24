@@ -17,13 +17,9 @@ RUN mkdir -p /opt/toolchain/${TARGETARCH}/src \
   && ./configure --prefix=/opt/toolchain/${TARGETARCH} \
   && make
 
-ARG TOOLTARGET=riscv64-unknown-elf
-ARG BINUTILS="2.36"
-ARG GCC="11.1.0"
-ARG GMP="6.2.1"
-ARG MPC="1.2.1"
-ARG MPFR="4.1.0"
+
+ARG GCC="11.2.0"
 
 # Create dist file in repo
-#RUN  bash -c "tar -cvjf repo/toolchain-gcc-elf-newlib-xtheadc-${TARGETARCH}-${GCC}.tbz2 /opt/toolchain/${TARGETARCH}/{bin,include,lib,libexec,share,${TOOLTARGET}}"
+RUN  bash -c "tar -cvjf repo/toolchain-gcc-elf-newlib-xtheadc-riscv64-${GCC}.tbz2 /opt/toolchain/${TARGETARCH}/{bin,include,lib,libexec,share,${TOOLTARGET}}"
 
