@@ -28,9 +28,16 @@ show:
 prune:
 	buildah rm -a
 	buildah rmi -a
-	
-build: $(addprefix build-, $(ARCHS))
-build-%:
-	$(eval ARCH := $(subst build-,,$@))
+
+repodir:
 	mkdir repo || true
+
+build: $(addprefix build-unknow-, $(ARCHS))
+build-unknow-%: repodir
+	$(eval ARCH := $(subst build-unknow-,,$@))
+	buildah bud $(BUILDAH_CACHE) --format docker --layers --build-arg JOBS=$(JOBS) --build-arg UBUNTU=$(UBUNTU) --build-arg TARGETARCH=$(ARCH) --build-arg TOOLTARGET=$(ARCH)-unknown-elf  --build-arg BINUTILS=$(BINUTILS) --build-arg GCC=$(GCC) --build-arg MPC=$(MPC) --build-arg MPFR=$(MPFR) -t $(ARCH_TAG) -f Dockerfile.march .
+
+
+build-xuantie: repodir
+	$(eval ARCH := "riscv64")
 	buildah bud $(BUILDAH_CACHE) --format docker --layers --build-arg JOBS=$(JOBS) --build-arg UBUNTU=$(UBUNTU) --build-arg TARGETARCH=$(ARCH) --build-arg TOOLTARGET=$(ARCH)-unknown-elf  --build-arg BINUTILS=$(BINUTILS) --build-arg GCC=$(GCC) --build-arg MPC=$(MPC) --build-arg MPFR=$(MPFR) -t $(ARCH_TAG) -f Dockerfile.march .
