@@ -1,0 +1,29 @@
+# syntax=docker/dockerfile:2
+ARG UBUNTU="ubuntu:impish"
+FROM ${UBUNTU}
+ARG DEBIAN_FRONTEND="noninteractive"
+ARG TARGETARCH=riscv64
+
+RUN apt-get -y update \
+  && apt-get -y upgrade \
+  && apt-get -y install autoconf automake autotools-dev curl python3 libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo gperf libtool patchutils bc zlib1g-dev libexpat-dev expect git
+
+RUN mkdir -p /opt/toolchain/${TARGETARCH}/src \
+  && mkdir -p /opt/toolchain/${TARGETARCH}/build \
+  && cd /opt/toolchain/${TARGETARCH}/src \
+  && git clone https://github.com/T-head-Semi/xuantie-gnu-toolchain \
+  && cd xuantie-gnu-toolchain/ \
+  && git submodule update --init riscv-binutils riscv-gcc riscv-newlib riscv-gdb \
+  && ./configure --prefix=/opt/toolchain/${TARGETARCH} \
+  && make
+
+ARG TOOLTARGET=riscv64-unknown-elf
+ARG BINUTILS="2.36"
+ARG GCC="11.1.0"
+ARG GMP="6.2.1"
+ARG MPC="1.2.1"
+ARG MPFR="4.1.0"
+
+# Create dist file in repo
+#RUN  bash -c "tar -cvjf repo/toolchain-gcc-elf-newlib-xtheadc-${TARGETARCH}-${GCC}.tbz2 /opt/toolchain/${TARGETARCH}/{bin,include,lib,libexec,share,${TOOLTARGET}}"
+

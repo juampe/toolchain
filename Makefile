@@ -1,5 +1,5 @@
 .PHONY : build all
-ARCH:= $(shell docker version -f "{{.Server.Arch}}")
+LOCAL_ARCH:= $(shell docker version -f "{{.Server.Arch}}")
 #To build several architectures add in this variable in space separated format
 ARCHS:= riscv64
 DOCKER_TAG := juampe/toolchain
@@ -35,9 +35,9 @@ repodir:
 build: $(addprefix build-unknow-, $(ARCHS))
 build-unknow-%: repodir
 	$(eval ARCH := $(subst build-unknow-,,$@))
-	buildah bud $(BUILDAH_CACHE) --format docker --layers --build-arg JOBS=$(JOBS) --build-arg UBUNTU=$(UBUNTU) --build-arg TARGETARCH=$(ARCH) --build-arg TOOLTARGET=$(ARCH)-unknown-elf  --build-arg BINUTILS=$(BINUTILS) --build-arg GCC=$(GCC) --build-arg MPC=$(MPC) --build-arg MPFR=$(MPFR) -t $(ARCH_TAG) -f Dockerfile.march .
+	buildah bud $(BUILDAH_CACHE) --format docker --layers --platform linux/$(LOCAL_ARCH) --build-arg JOBS=$(JOBS) --build-arg UBUNTU=$(UBUNTU) --build-arg TARGETARCH=$(ARCH) --build-arg TOOLTARGET=$(ARCH)-unknown-elf  --build-arg BINUTILS=$(BINUTILS) --build-arg GCC=$(GCC) --build-arg MPC=$(MPC) --build-arg MPFR=$(MPFR) -t $(ARCH_TAG) -f Dockerfile.march .
 
 
 build-xuantie: repodir
 	$(eval ARCH := "riscv64")
-	buildah bud $(BUILDAH_CACHE) --format docker --layers --build-arg JOBS=$(JOBS) --build-arg UBUNTU=$(UBUNTU) --build-arg TARGETARCH=$(ARCH) --build-arg TOOLTARGET=$(ARCH)-unknown-elf  --build-arg BINUTILS=$(BINUTILS) --build-arg GCC=$(GCC) --build-arg MPC=$(MPC) --build-arg MPFR=$(MPFR) -t $(ARCH_TAG) -f Dockerfile.march .
+	buildah bud $(BUILDAH_CACHE) --format docker --layers --platform linux/$(LOCAL_ARCH) --build-arg JOBS=$(JOBS) --build-arg UBUNTU=$(UBUNTU) --build-arg TARGETARCH=$(ARCH) -t $(ARCH_TAG) -f Dockerfile.openc910 .

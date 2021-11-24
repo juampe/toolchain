@@ -14,12 +14,16 @@ cd toolchain
 #Adapt Makefile DOCKER_TAG to tag and fit your own docker registry
 #Adapt Makefile ARCHS for multiple builds or use autosense build-* target
 make
+
 #For example to build riscv64-unwknow-elf
 make build-riscv64
 #For example to build arm64-unwknow-elf
 make build-arm64
 #For example to build xtensa-unwknow-elf
 make build-xtensa
+
+#For example to build riscv64-unwknow-elf for xuantie openc910 from xuantie toolchain
+make build-xuantie
 ```
 
 The resulted toolchain is stored in the repo directory
