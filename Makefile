@@ -40,4 +40,4 @@ build-unknow-%: repodir
 
 build-xuantie: repodir
 	$(eval ARCH := "riscv64")
-	buildah bud $(BUILDAH_CACHE) --format docker --layers --platform linux/$(LOCAL_ARCH) --build-arg JOBS=$(JOBS) --build-arg UBUNTU=$(UBUNTU) --build-arg TARGETARCH=$(ARCH) -t $(ARCH_TAG) -f Dockerfile.openc910 .
+	buildah bud $(BUILDAH_CACHE) --format docker --layers --platform linux/$(LOCAL_ARCH) --build-arg JOBS=$(JOBS) --build-arg UBUNTU=$(UBUNTU) --build-arg TARGETARCH=$(ARCH) --build-arg TOOLTARGET=$(ARCH)-unknown-elf -t $(ARCH_TAG) -f Dockerfile.openc910 .

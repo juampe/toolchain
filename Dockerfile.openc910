@@ -19,6 +19,7 @@ RUN mkdir -p /opt/toolchain/${TARGETARCH}/src \
 
 
 ARG GCC="11.2.0"
+ARG TOOLTARGET="riscv64-unknown-elf"
 
 # Create dist file in repo
 RUN  bash -c "tar -cvjf repo/toolchain-gcc-elf-newlib-xtheadc-riscv64-${GCC}.tbz2 /opt/toolchain/${TARGETARCH}/{bin,include,lib,libexec,share,${TOOLTARGET}}"
