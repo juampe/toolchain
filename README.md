@@ -36,13 +36,6 @@ http://avelinoherrera.com/blog/index.php?entry=entry210526-161939
 To T-Head for not allow toolchain downloads out of china (Registered download + Force chinese phone number in registration process)
 
 # Enjoy!🍿
-
-Hi @smtdta, now I built my own xuantie toolchain, with the recomended T-Head sources.
-Forget "bizarre setup scripts" and use bash and exports provided in this example run.
-Patch 'mk' file with 'sed' to avoid shell 'fd' error.
-With this configuration I can run the "hello_world".
-Those are the steps:
-
 # Appendix 🎁
 ## Build xuantie T-Head toolchain
 ```
