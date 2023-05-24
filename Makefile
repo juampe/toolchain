@@ -35,8 +35,10 @@ repodir:
 build: $(addprefix build-unknown-, $(ARCHS))
 build-unknown-%: repodir
 	$(eval ARCH := $(subst build-unknown-,,$@))
-	buildah bud $(BUILDAH_CACHE) --format docker --layers --platform linux/$(LOCAL_ARCH) --build-arg JOBS=$(JOBS) --build-arg UBUNTU=$(UBUNTU) --build-arg TARGETARCH=$(ARCH) --build-arg TOOLTARGET=$(ARCH)-unknownn-elf  --build-arg BINUTILS=$(BINUTILS) --build-arg GCC=$(GCC) --build-arg MPC=$(MPC) --build-arg MPFR=$(MPFR) -t $(ARCH_TAG) -f Dockerfile.march .
+	$(eval ARCH_TAG := $(DOCKER_TAG):$(GCC)-$(ARCH)$(DOCKER_SUBTAG))
+	buildah bud $(BUILDAH_CACHE) --format docker --layers --platform linux/$(LOCAL_ARCH) --build-arg JOBS=$(JOBS) --build-arg UBUNTU=$(UBUNTU) --build-arg TARGETARCH=$(ARCH) --build-arg TOOLTARGET=$(ARCH)-unknown-elf  --build-arg BINUTILS=$(BINUTILS) --build-arg GCC=$(GCC) --build-arg MPC=$(MPC) --build-arg MPFR=$(MPFR) -t $(ARCH_TAG) -f Dockerfile.march .
 
 build-xuantie: repodir
 	$(eval ARCH := "riscv64")
-	buildah bud $(BUILDAH_CACHE) --format docker --layers --platform linux/$(LOCAL_ARCH) --build-arg JOBS=$(JOBS) --build-arg UBUNTU=$(UBUNTU) --build-arg TARGETARCH=$(ARCH) --build-arg TOOLTARGET=$(ARCH)-unknownn-elf -t $(ARCH_TAG) -f Dockerfile.openc910 .
+	$(eval ARCH_TAG := $(DOCKER_TAG):$(GCC)-$(ARCH)$(DOCKER_SUBTAG))
+	buildah bud $(BUILDAH_CACHE) --format docker --layers --platform linux/$(LOCAL_ARCH) --build-arg JOBS=$(JOBS) --build-arg UBUNTU=$(UBUNTU) --build-arg TARGETARCH=$(ARCH) --build-arg TOOLTARGET=$(ARCH)-unknown-elf -t $(ARCH_TAG) -f Dockerfile.openc910 .

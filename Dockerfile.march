@@ -14,8 +14,7 @@ RUN apt-get -y update \
   && apt-get -y upgrade \
   && apt-get -y install --no-install-recommends apt-utils bash curl wget ca-certificates automake build-essential pkg-config \
   libffi-dev libgmp-dev libssl-dev libtinfo-dev libsystemd-dev zlib1g-dev make g++ tmux git jq wget libncursesw5 libtool \
-  autoconf libnuma1 libnuma-dev opt llvm llvm-13 llvm-13-dev clang-13 libclang-13-dev libatomic1 libatomic-ops-dev
-
+  autoconf libnuma1 libnuma-dev opt llvm llvm-13 llvm-13-dev clang-13 libclang-13-dev libatomic1 libatomic-ops-dev texinfo
 
 RUN mkdir -p /opt/toolchain/${TARGETARCH}/src \
   && mkdir -p /opt/toolchain/${TARGETARCH}/build \
