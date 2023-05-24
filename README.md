@@ -16,11 +16,13 @@ cd toolchain
 make
 
 #For example to build riscv64-unwknow-elf
-make build-riscv64
+make build-unknown-riscv64
 #For example to build arm64-unwknow-elf
-make build-arm64
+make build-unknown-arm64
 #For example to build xtensa-unwknow-elf
-make build-xtensa
+make build-unknown-xtensa
+#For example to build amd64-unwknow-elf
+make build-unknown-amd64
 
 #For example to build riscv64-unwknow-elf for xuantie openc910 from xuantie toolchain
 make build-xuantie
