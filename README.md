@@ -15,12 +15,12 @@ cd toolchain
 #Adapt Makefile ARCHS for multiple builds or use autosense build-* target
 make
 
-#For example to build riscv64-unwknow-elf
-make build-unknown-riscv64
+#For example to build riscv64-unwknow-elf with newlib
+make build-unknown-newlib-riscv64
 #For example to build arm64-unwknow-elf
 make build-unknown-arm64
-#For example to build xtensa-unwknow-elf
-make build-unknown-xtensa
+#For example to build xtensa-unwknow-elf with newlib
+make build-unknown-newlib-xtensa
 #For example to build amd64-unwknow-elf
 make build-unknown-amd64
 
