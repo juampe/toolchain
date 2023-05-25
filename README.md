@@ -21,8 +21,8 @@ make build-unknown-newlib-riscv64
 make build-unknown-arm64
 #For example to build xtensa-unwknow-elf with newlib
 make build-unknown-newlib-xtensa
-#For example to build amd64-unwknow-elf
-make build-unknown-amd64
+#For example to build x86_64-unwknow-elf
+make build-unknown-x86_64
 
 #For example to build riscv64-unwknow-elf for xuantie openc910 from xuantie toolchain
 make build-xuantie
