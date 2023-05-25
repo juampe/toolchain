@@ -44,25 +44,15 @@ RUN cd /opt/toolchain/${TARGETARCH}/src \
   && mkdir gcc-${GCC}-stage-1 \
   && cd gcc-${GCC}-stage-1/ \
   && export PATH=/opt/toolchain/${TARGETARCH}/bin:${PATH} \
-  && ../../src/gcc-${GCC}/configure --prefix=/opt/toolchain/${TARGETARCH} --target=${TOOLTARGET} --enable-languages=c --without-headers --disable-nls --disable-threads --disable-shared --disable-libssp --with-newlib \
+  && ../../src/gcc-${GCC}/configure --prefix=/opt/toolchain/${TARGETARCH} --target=${TOOLTARGET} --enable-languages=c --without-headers --disable-nls --disable-threads --disable-shared --disable-libssp \
   && make all-gcc all-target-libgcc \
   && make install-gcc install-target-libgcc 
-
-RUN cd /opt/toolchain/${TARGETARCH}/src \
-  && git clone git://github.com/riscv/riscv-newlib.git \
-  && cd ../build \
-  && mkdir newlib \
-  && cd newlib \
-  && export PATH=/opt/toolchain/${TARGETARCH}/bin:${PATH} \
-  && ../../src/riscv-newlib/configure --prefix=/opt/toolchain/${TARGETARCH} --target=${TOOLTARGET} \
-  && make \
-  && make install 
 
 RUN cd /opt/toolchain/${TARGETARCH}/build \
   && mkdir gcc-${GCC}-stage-2 \
   && cd gcc-${GCC}-stage-2/ \
   && export PATH=/opt/toolchain/${TARGETARCH}/bin:${PATH} \
-  && ../../src/gcc-${GCC}/configure --prefix=/opt/toolchain/${TARGETARCH} --target=${TOOLTARGET} --enable-languages=c,c++ --disable-nls --disable-threads --disable-shared --disable-libssp --with-newlib --with-headers=../../src/riscv-newlib/newlib/libc/include \
+  && ../../src/gcc-${GCC}/configure --prefix=/opt/toolchain/${TARGETARCH} --target=${TOOLTARGET} --enable-languages=c,c++ --disable-nls --disable-threads --disable-shared --disable-libssp \
   && make \
   && make install
 
