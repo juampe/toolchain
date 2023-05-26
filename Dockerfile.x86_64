@@ -14,21 +14,21 @@ RUN apt-get -y update \
   && apt-get -y upgrade \
   && apt-get -y install --no-install-recommends apt-utils bash curl wget ca-certificates automake build-essential pkg-config \
   libffi-dev libgmp-dev libssl-dev libtinfo-dev libsystemd-dev zlib1g-dev make g++ tmux git jq wget libncursesw5 libtool \
-  autoconf libnuma1 libnuma-dev opt llvm llvm-13 llvm-13-dev clang-13 libclang-13-dev libatomic1 libatomic-ops-dev texinfo
+  autoconf libnuma1 libnuma-dev opt llvm llvm-13 llvm-13-dev clang-13 libclang-13-dev libatomic1 libatomic-ops-dev texinfo bison flex
 
-RUN mkdir -p /opt/toolchain/${TARGETARCH}/src \
-  && mkdir -p /opt/toolchain/${TARGETARCH}/build \
-  && cd /opt/toolchain/${TARGETARCH}/src \
+RUN mkdir -p /opt/toolchain/src \
+  && mkdir -p /opt/toolchain/build \
+  && cd /opt/toolchain/src \
   && wget https://ftp.gnu.org/gnu/binutils/binutils-${BINUTILS}.tar.bz2 \
   && tar xf binutils-${BINUTILS}.tar.bz2 \
   && cd ../build \
   && mkdir binutils-${BINUTILS} \
   && cd binutils-${BINUTILS}/ \
-  && ../../src/binutils-${BINUTILS}/configure --prefix=/opt/toolchain/${TARGETARCH} --target=${TOOLTARGET} --disable-nls \
-  && make -j6 \
-  && make install
+  && ../../src/binutils-${BINUTILS}/configure --prefix=/opt/toolchain/gcc-${GCC} --disable-nls \
+  && make \
+  && make install-strip
 
-RUN cd /opt/toolchain/${TARGETARCH}/src \
+RUN cd /opt/toolchain/src \
   && wget https://ftp.gnu.org/gnu/gcc/gcc-${GCC}/gcc-${GCC}.tar.gz \
   && wget https://ftp.gnu.org/gnu/gmp/gmp-${GMP}.tar.bz2 \
   && wget https://ftp.gnu.org/gnu/mpc/mpc-${MPC}.tar.gz \
@@ -41,21 +41,13 @@ RUN cd /opt/toolchain/${TARGETARCH}/src \
   && mv mpc-${MPC} gcc-${GCC}/mpc \
   && mv mpfr-${MPFR} gcc-${GCC}/mpfr \
   && cd ../build/ \
-  && mkdir gcc-${GCC}-stage-1 \
-  && cd gcc-${GCC}-stage-1/ \
-  && export PATH=/opt/toolchain/${TARGETARCH}/bin:${PATH} \
-  && ../../src/gcc-${GCC}/configure --prefix=/opt/toolchain/${TARGETARCH} --target=${TOOLTARGET} --enable-languages=c --without-headers --disable-nls --disable-threads --disable-shared --disable-libssp --disable-bootstrap \
-  && make -j6 all-gcc all-target-libgcc \
-  && make install-gcc install-target-libgcc 
-
-RUN cd /opt/toolchain/${TARGETARCH}/build \
-  && mkdir gcc-${GCC}-stage-2 \
-  && cd gcc-${GCC}-stage-2/ \
-  && export PATH=/opt/toolchain/${TARGETARCH}/bin:${PATH} \
-  && ../../src/gcc-${GCC}/configure --prefix=/opt/toolchain/${TARGETARCH} --target=${TOOLTARGET} --enable-languages=c,c++ --disable-nls --disable-threads --disable-shared --disable-libssp \
-  && make -j6 \
-  && make install
+  && mkdir gcc-${GCC} \
+  && cd gcc-${GCC}/ \
+  && export PATH=/opt/toolchain/gcc-${GCC}/bin:${PATH} \
+  && ../../src/gcc-${GCC}/configure --prefix=/opt/toolchain/gcc-${GCC} --enable-languages=c,c++ --enable-checking=release --disable-multilib \
+  && make  \
+  && make install-strip
 
 # Create dist file in repo
-RUN  bash -c "tar -cvjf repo/toolchain-gcc-elf-${TARGETARCH}-${GCC}.tbz2 /opt/toolchain/${TARGETARCH}/{bin,include,lib,libexec,share,${TOOLTARGET}}"
+RUN  bash -c "tar -cvjf repo/toolchain-gcc-elf-${GCC}.tbz2 /opt/toolchain/{bin,include,lib,libexec,share,${TOOLTARGET}}"
 
