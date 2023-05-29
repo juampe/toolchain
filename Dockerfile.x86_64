@@ -49,5 +49,6 @@ RUN cd /opt/toolchain/src \
   && make install-strip
 
 # Create dist file in repo
-RUN  bash -c "tar -cvjf repo/toolchain-gcc-elf-${GCC}.tbz2 /opt/toolchain/{bin,include,lib,libexec,share,${TOOLTARGET}}"
+#RUN bash -c "tar -cvjf repo/toolchain-gcc-elf-${GCC}.tbz2 /opt/toolchain/gcc-${GCC}/{bin,include,lib,libexec,share,${TOOLTARGET}}"
+RUN bash -c "tar -cvjf repo/toolchain-gcc-elf-${GCC}.tbz2 /opt/toolchain/gcc-${GCC}/*"
 
