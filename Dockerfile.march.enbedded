@@ -24,7 +24,7 @@ RUN mkdir -p /opt/toolchain/${TARGETARCH}/src \
     && cd ../build \
     && mkdir binutils-${BINUTILS} \
     && cd binutils-${BINUTILS}/ \
-    && ../../src/binutils-${BINUTILS}/configure --prefix=/opt/toolchain/${TARGETARCH} --target=${TOOLTARGET} --disable-nls \
+    && ../../src/binutils-${BINUTILS}/configure --prefix=/opt/toolchain/gcc/${TOOLTARGET}/${GCC} --target=${TOOLTARGET} --disable-nls \
     && make \
     && make install
 
@@ -44,7 +44,7 @@ RUN cd /opt/toolchain/${TARGETARCH}/src \
     && mkdir gcc-${GCC}-stage-1 \
     && cd gcc-${GCC}-stage-1/ \
     && export PATH=/opt/toolchain/${TARGETARCH}/bin:${PATH} \
-    && ../../src/gcc-${GCC}/configure --prefix=/opt/toolchain/${TARGETARCH} --target=${TOOLTARGET} --enable-languages=c --without-headers --disable-nls --disable-threads --disable-shared --disable-libssp --with-newlib \
+    && ../../src/gcc-${GCC}/configure --prefix=/opt/toolchain/gcc/${TOOLTARGET}/${GCC} --target=${TOOLTARGET} --enable-languages=c --without-headers --disable-nls --disable-threads --disable-shared --disable-libssp --with-newlib \
     && make all-gcc all-target-libgcc \
     && make install-gcc install-target-libgcc 
 
@@ -52,10 +52,10 @@ RUN cd /opt/toolchain/${TARGETARCH}/build \
     && mkdir gcc-${GCC}-stage-2 \
     && cd gcc-${GCC}-stage-2/ \
     && export PATH=/opt/toolchain/${TARGETARCH}/bin:${PATH} \
-    && ../../src/gcc-${GCC}/configure --prefix=/opt/toolchain/${TARGETARCH} --target=${TOOLTARGET} --enable-languages=c,c++ --disable-nls --disable-threads --disable-shared --disable-libssp --with-newlib \
+    && ../../src/gcc-${GCC}/configure --prefix=/opt/toolchain/gcc/${TOOLTARGET}/${GCC} --target=${TOOLTARGET} --enable-languages=c,c++ --disable-nls --disable-threads --disable-shared --disable-libssp --with-newlib \
     && make \
     && make install
 
 # Create dist file in repo
-RUN  bash -c "tar -cvjf repo/toolchain-gcc-elf-newlib-${TARGETARCH}-${GCC}.tbz2 /opt/toolchain/${TARGETARCH}/{bin,include,lib,libexec,share,${TOOLTARGET}}"
+RUN  bash -c "tar -cvjf repo/toolchain-${TOOLTARGET}-gcc-elf-${GCC}.tbz2 /opt/toolchain/gcc/${TOOLTARGET}/${GCC}/*"
 

@@ -24,7 +24,7 @@ RUN mkdir -p /opt/toolchain/src \
   && cd ../build \
   && mkdir binutils-${BINUTILS} \
   && cd binutils-${BINUTILS}/ \
-  && ../../src/binutils-${BINUTILS}/configure --prefix=/opt/toolchain/gcc-${GCC} --disable-nls \
+  && ../../src/binutils-${BINUTILS}/configure --prefix=/opt/toolchain/gcc/${TOOLTARGET}/${GCC} --disable-nls \
   && make \
   && make install-strip
 
@@ -43,12 +43,10 @@ RUN cd /opt/toolchain/src \
   && cd ../build/ \
   && mkdir gcc-${GCC} \
   && cd gcc-${GCC}/ \
-  && export PATH=/opt/toolchain/gcc-${GCC}/bin:${PATH} \
-  && ../../src/gcc-${GCC}/configure --prefix=/opt/toolchain/gcc-${GCC} --enable-languages=c,c++ --enable-checking=release --disable-multilib \
+  && export PATH=/opt/toolchain/gcc/${TOOLTARGET}/${GCC}/bin:${PATH} \
+  && ../../src/gcc-${GCC}/configure --prefix=/opt/toolchain/gcc/${TOOLTARGET}/${GCC} --enable-languages=c,c++ --enable-checking=release --disable-multilib --build=${TOOLTARGET} \
   && make  \
   && make install-strip
 
 # Create dist file in repo
-#RUN bash -c "tar -cvjf repo/toolchain-gcc-elf-${GCC}.tbz2 /opt/toolchain/gcc-${GCC}/{bin,include,lib,libexec,share,${TOOLTARGET}}"
-RUN bash -c "tar -cvjf repo/toolchain-gcc-elf-${GCC}.tbz2 /opt/toolchain/gcc-${GCC}/*"
-
+RUN bash -c "tar -cvjf repo/toolchain-${TOOLTARGET}-gcc-elf-${GCC}.tbz2 /opt/toolchain/gcc/${TOOLTARGET}/${GCC}/*"

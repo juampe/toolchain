@@ -1,4 +1,4 @@
-.PHONY : build all
+.PHONY : build all prune repodir
 LOCAL_ARCH:= $(shell docker version -f "{{.Server.Arch}}")
 #To build several architectures add in this variable in space separated format
 ARCHS:= riscv64
@@ -32,24 +32,22 @@ prune:
 repodir:
 	mkdir repo || true
 
-build: $(addprefix build-unknown-, $(ARCHS))
-
-build-unknown-x86_64: repodir
-	$(eval ARCH := "x86_64")
+build-linux-x86_64: repodir
+	$(eval ARCH := x86_64)
 	$(eval ARCH_TAG := $(DOCKER_TAG):$(GCC)-$(ARCH)$(DOCKER_SUBTAG))
-	buildah bud $(BUILDAH_CACHE) --format docker --layers --platform linux/$(LOCAL_ARCH) --build-arg JOBS=$(JOBS) --build-arg UBUNTU=$(UBUNTU) --build-arg TARGETARCH=$(ARCH) --build-arg TOOLTARGET=$(ARCH)-unknown-elf  --build-arg BINUTILS=$(BINUTILS) --build-arg GCC=$(GCC) --build-arg MPC=$(MPC) --build-arg MPFR=$(MPFR) -t $(ARCH_TAG) -f Dockerfile.x86_64 .
+	buildah bud $(BUILDAH_CACHE) --format docker --layers --platform linux/$(LOCAL_ARCH) --build-arg JOBS=$(JOBS) --build-arg UBUNTU=$(UBUNTU) --build-arg TARGETARCH=$(ARCH) --build-arg TOOLTARGET=$(ARCH)-linux-gnu --build-arg BINUTILS=$(BINUTILS) --build-arg GCC=$(GCC) --build-arg MPC=$(MPC) --build-arg MPFR=$(MPFR) -t $(ARCH_TAG) -f Dockerfile.x86_64 .
 
-build-unknown-%: repodir
-	$(eval ARCH := $(subst build-unknown-,,$@))
+build-linux-%: repodir
+	$(eval ARCH := $(subst build-embedded-,,$@))
 	$(eval ARCH_TAG := $(DOCKER_TAG):$(GCC)-$(ARCH)$(DOCKER_SUBTAG))
-	buildah bud $(BUILDAH_CACHE) --format docker --layers --platform linux/$(LOCAL_ARCH) --build-arg JOBS=$(JOBS) --build-arg UBUNTU=$(UBUNTU) --build-arg TARGETARCH=$(ARCH) --build-arg TOOLTARGET=$(ARCH)-unknown-elf  --build-arg BINUTILS=$(BINUTILS) --build-arg GCC=$(GCC) --build-arg MPC=$(MPC) --build-arg MPFR=$(MPFR) -t $(ARCH_TAG) -f Dockerfile.march .
+	buildah bud $(BUILDAH_CACHE) --format docker --layers --platform linux/$(LOCAL_ARCH) --build-arg JOBS=$(JOBS) --build-arg UBUNTU=$(UBUNTU) --build-arg TARGETARCH=$(ARCH) --build-arg TOOLTARGET=$(ARCH)-embedded-elf --build-arg BINUTILS=$(BINUTILS) --build-arg GCC=$(GCC) --build-arg MPC=$(MPC) --build-arg MPFR=$(MPFR) -t $(ARCH_TAG) -f Dockerfile.march .
 
-build-unknown-newlib-%: repodir
-	$(eval ARCH := $(subst build-unknown-newlib-,,$@))
+build-embedded-%: repodir
+	$(eval ARCH := $(subst build-embedded-,,$@))
 	$(eval ARCH_TAG := $(DOCKER_TAG):$(GCC)-$(ARCH)$(DOCKER_SUBTAG))
-	buildah bud $(BUILDAH_CACHE) --format docker --layers --platform linux/$(LOCAL_ARCH) --build-arg JOBS=$(JOBS) --build-arg UBUNTU=$(UBUNTU) --build-arg TARGETARCH=$(ARCH) --build-arg TOOLTARGET=$(ARCH)-unknown-elf  --build-arg BINUTILS=$(BINUTILS) --build-arg GCC=$(GCC) --build-arg MPC=$(MPC) --build-arg MPFR=$(MPFR) -t $(ARCH_TAG) -f Dockerfile.march.newlib .
+	buildah bud $(BUILDAH_CACHE) --format docker --layers --platform linux/$(LOCAL_ARCH) --build-arg JOBS=$(JOBS) --build-arg UBUNTU=$(UBUNTU) --build-arg TARGETARCH=$(ARCH) --build-arg TOOLTARGET=$(ARCH)-embedded-elf --build-arg BINUTILS=$(BINUTILS) --build-arg GCC=$(GCC) --build-arg MPC=$(MPC) --build-arg MPFR=$(MPFR) --build-arg GCC_CFG_OPTS="--with-newlib" -t $(ARCH_TAG) -f Dockerfile.march.embedded .
 
 build-xuantie: repodir
-	$(eval ARCH := "riscv64")
+	$(eval ARCH := riscv64)
 	$(eval ARCH_TAG := $(DOCKER_TAG):$(GCC)-$(ARCH)$(DOCKER_SUBTAG))
 	buildah bud $(BUILDAH_CACHE) --format docker --layers --platform linux/$(LOCAL_ARCH) --build-arg JOBS=$(JOBS) --build-arg UBUNTU=$(UBUNTU) --build-arg TARGETARCH=$(ARCH) --build-arg TOOLTARGET=$(ARCH)-unknown-elf -t $(ARCH_TAG) -f Dockerfile.openc910 .

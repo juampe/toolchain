@@ -12,17 +12,15 @@ git clone https://github.com/juampe/toolchain.git
 cd toolchain
 
 #Adapt Makefile DOCKER_TAG to tag and fit your own docker registry
-#Adapt Makefile ARCHS for multiple builds or use autosense build-* target
-make
 
-#For example to build riscv64-unwknow-elf with newlib
-make build-unknown-newlib-riscv64
-#For example to build arm64-unwknow-elf
-make build-unknown-arm64
-#For example to build xtensa-unwknow-elf with newlib
-make build-unknown-newlib-xtensa
-#For example to build x86_64-unwknow-elf
-make build-unknown-x86_64
+#For example to build riscv64-embedded-elf with newlib
+make build-embedded-riscv64
+#For example to build xtensa-embedded-elf with newlib
+make build-embedded-xtensa
+#For example to build arm64-linux-gnu
+make build-linux-arm64
+#For example to build x86_64-linux-elf
+make build-linux-x86_64
 
 #For example to build riscv64-unwknow-elf for xuantie openc910 from xuantie toolchain
 make build-xuantie
